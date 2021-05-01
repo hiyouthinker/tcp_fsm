@@ -1,8 +1,8 @@
 # tcp_fsm
-TCP Finite State Machine
+TCP Server Finite State Machine
 ## 1 Introduction
 ```
-This is a TCP FSM implemented based on Scapy
+This is a TCP Server FSM implemented based on Scapy
 ```
 ## 2 test
 ### 2.1 environment
