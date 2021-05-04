@@ -60,6 +60,10 @@ def tcp_packet_handler(pkt):
 				value = (tcp_state.TCP_ESTABLISHED, pkt[TCP].seq, pkt[TCP].ack, tcp_data_len)
 				tcp_state.sessions.update({key : value})
 				print "TCP 3-way handshake was completed successfully"
+			else :
+				if ((state == tcp_state.TCP_FIN_WAIT) and (value[4] & tcp_state.TCP_SESSION_SUBSTATE_LAST_ACK)):
+					value = (value[0], value[1], value[2], value[3], (value[4] & 0xf0) | tcp_state.TCP_SESSION_SUBSTATE_CLOSED)
+					tcp_state.sessions.update({key : value})
 			return
 		# PUSH or PUSH + ACK
 		elif (index == 3):

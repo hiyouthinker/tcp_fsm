@@ -16,24 +16,29 @@ def send_tcp_pkts(type):
 		state = value[0]
 		seq = value[2]
 		ack = value[1] + value[3]
+		flags = tcp_state.tcp_flags_rstack
+		target = "RST"
+		substate = tcp_state.TCP_SESSION_SUBSTATE_CLOSED | tcp_state.tcp_session_server_rst
 
-		if (type == 0):
-			l3 = IP(src=key[2], dst=key[0])/TCP(sport=key[3], dport=key[1], flags=tcp_state.tcp_flags_rstack, seq=seq, ack=ack)
-			print ("reset to [%s:%d => %s:%d] session (state: %s, seq/ack: %d/%d, length: %d)"
-				% (key[2], key[3], key[0], key[1], tcp_state.tcp_session_states[state], ack, seq, value[3]))
-			value = (tcp_state.TCP_FIN_WAIT, value[1], value[2], value[3], tcp_state.TCP_SESSION_SUBSTATE_CLOSED | tcp_state.tcp_session_server_rst)
-		else :
-			l3 = IP(src=key[2], dst=key[0])/TCP(sport=key[3], dport=key[1], flags=tcp_state.tcp_flags_fin, seq=seq, ack=ack)
-			print ("fin to [%s:%d => %s:%d] session (state: %s, seq/ack: %d/%d)"
-				% (key[2], key[3], key[0], key[1], tcp_state.tcp_session_states[state], seq, ack))
-			value = (tcp_state.TCP_FIN_WAIT, value[1], value[2], value[3], tcp_state.TCP_SESSION_SUBSTATE_CLOSED | tcp_state.tcp_session_server_rst)
+		if ((value[0] == tcp_state.TCP_FIN_WAIT) and (value[4] & 0x0f) == tcp_state.TCP_SESSION_SUBSTATE_CLOSED):
+			continue
+		if (type == 1) :
+			flags = tcp_state.tcp_flags_fin
+			target = "FIN"
+			substate = tcp_state.TCP_SESSION_SUBSTATE_FIN_WAIT1 | tcp_state.tcp_session_server_fin
 
+		print ("send %s to [%s:%d => %s:%d] session (state: %s, seq/ack: %d/%d, length: %d)"
+			% (target, key[2], key[3], key[0], key[1], tcp_state.tcp_session_states[state], seq, ack, value[3]))
+
+		value = (tcp_state.TCP_FIN_WAIT, value[1], value[2], value[3], substate)
 		tcp_state.sessions.update({key : value})
+
+		l3 = IP(src=key[2], dst=key[0])/TCP(sport=key[3], dport=key[1], flags=flags, seq=seq, ack=ack)
 		send(l3, verbose=False)
 
 def show_tcp_all_sessions():
 	keys = tcp_state.sessions.keys()
-	print "session table: %d item(s)" % len(keys)
+	print "\nsession table: %d item(s)" % len(keys)
 	for key in keys :
 		value = tcp_state.sessions.get(key)
 		state = value[0]

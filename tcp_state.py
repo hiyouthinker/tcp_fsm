@@ -29,13 +29,13 @@ tcp_session_server_fin = 0x40
 
 # recv fin -> send fin & ack
 TCP_SESSION_SUBSTATE_LAST_ACK = 1
-# recv ack
+# recv last ack
 TCP_SESSION_SUBSTATE_CLOSED = 2
 # send fin and wait ack
 TCP_SESSION_SUBSTATE_FIN_WAIT1 = 3
 # recv ack and wait fin
 TCP_SESSION_SUBSTATE_FIN_WAIT2 = 4
-# recv ack
+# recv fin and send ack
 TCP_SESSION_SUBSTATE_TIME_WAIT = 5
 
 '''
@@ -62,10 +62,10 @@ tcp_session_substates = {
 }
 
 tcp_session_destroy_first_pkt_dir = {
-	tcp_session_client_rst : "RST From Client",
-	tcp_session_server_rst : "RST From Server",
-	tcp_session_client_fin : "FIN From Client",
-	tcp_session_server_fin : "FIN From server",
+	tcp_session_client_rst : "RST is from Client",
+	tcp_session_server_rst : "RST is from Server",
+	tcp_session_client_fin : "FIN is from Client",
+	tcp_session_server_fin : "FIN Fis from server",
 }
 
 def tcp_flags_check(flags):
