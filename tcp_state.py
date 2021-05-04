@@ -65,7 +65,7 @@ tcp_session_destroy_first_pkt_dir = {
 	tcp_session_client_rst : "RST is from Client",
 	tcp_session_server_rst : "RST is from Server",
 	tcp_session_client_fin : "FIN is from Client",
-	tcp_session_server_fin : "FIN Fis from server",
+	tcp_session_server_fin : "FIN is from server",
 }
 
 def tcp_flags_check(flags):
